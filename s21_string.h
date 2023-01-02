@@ -2,6 +2,8 @@
 #define S21_STRING_H_
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
+#include <math.h>
 char *s21_strchr(const char *str, int c);
 size_t s21_strlen(const char *str);
 int s21_strcmp(const char *str1, const char *str2);

@@ -20,10 +20,10 @@ void shift_right(char **str, int len, Flags *flags);
 void check_minus(const char **format, Flags *flags) ;
 
 int main() {
-    int age = 10;
+    int age = 1000;
     char name[16] = "Ira";
     char details[350];
-    int i = sprintf(details, "Name: %s\nAge: %i\nName: %s\nnumber = %d\nfruit: %s\nsymb = %5c", name, age, "Izolda", 150, "ananasinka", 'n');
+    int i = s21_sprintf(details, "Name: %10s\nAge: %i\nName: %-20s\nnumber = %d\nfruit: %s\nsymb = % 5c", name, age, "Izolda", 150, "ananasinka", 'n');
     printf("%s\n", details);
     printf("%d\n", i);
     return 0;
@@ -48,7 +48,7 @@ void check_minus(const char **format, Flags *flags) {
 void check_plus(const char **format, Flags *flags) {
     if (**format == '+') {
         flags->plus = 1;
-        if (flags->space) fprintf(stderr, "void check_int_num(const char **format, Flags *flags)");
+        //if (flags->space) fprintf(stderr, "\033[31mspace flag ignored with '+' flag in gnu_printf format\033[0m\n");
     }
 }
 
@@ -78,10 +78,10 @@ void proc_flags(const char **format, Flags *flags) {
 }
 
 void shift_right(char **str, int len, Flags *flags) {
-    while (len++ <= flags->num) {
+    while (len < flags->num) {
         *(*str)++ = ' ' ;
+        len++;
     }
-    (*str)--;
 }
 
 void spec_c(char **str, const char **format, va_list va, Flags *flags) {
@@ -89,18 +89,30 @@ void spec_c(char **str, const char **format, va_list va, Flags *flags) {
         if (flags->space) {
             fprintf(stderr, "\033[31mSpace with char ne nado!\033[0m\n");
         }
+        if (flags->plus) {
+            fprintf(stderr, "\033[31mPlus with char ne nado!\033[0m\n");
+        }
         if (flags->num && !flags->minus) shift_right(str, 1, flags);
         *(*str)++ = va_arg(va, int);
-        if (flags->num && flags-> minus) shift_right(str, 1, flags);
+        if (flags->num && flags->minus) shift_right(str, 1, flags);
     }
 }
 
 void spec_s(char **str, const char **format, va_list va, Flags *flags) {
     if (**format == 's') {
+        if (flags->space) {
+            fprintf(stderr, "\033[31mSpace with char* ne nado!\033[0m\n");
+        }
+        if (flags->plus) {
+            fprintf(stderr, "\033[31mPlus with char* ne nado!\033[0m\n");
+        }
         char *pr_s = va_arg(va, char*);
+        int len = s21_strlen(pr_s);
+        if (flags->num && !flags->minus) shift_right(str, len, flags);
         while (*pr_s != '\0') {
             *(*str)++ = *pr_s++;
         }
+        if (flags->num && flags->minus) shift_right(str, len, flags);
     }
 }
 
